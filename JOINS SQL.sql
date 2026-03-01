@@ -1,0 +1,386 @@
+CREATE DATABASE ELECTRONICSCOMAPNY;
+USE ELECTRONICSCOMAPNY;
+
+
+CREATE TABLE SUPPLIERS (
+SUPPLIER_ID INT PRIMARY KEY,
+SUPPLIER_NAME VARCHAR(50),
+CITY VARCHAR(50));
+
+CREATE TABLE PRODUCTS (
+PRODUCT_ID INT PRIMARY KEY,
+PRODUCT_NAME VARCHAR(50),
+PRICE DECIMAL(10,2),
+SUPPLIER_ID INT,
+foreign key
+(SUPPLIER_ID) references SUPPLIERS(SUPPLIER_ID));
+
+CREATE TABLE CUSTOMERS (
+CUSTOMER_ID INT PRIMARY KEY,
+CUSTOMER_NAME VARCHAR(50),
+CITY VARCHAR(50));
+
+CREATE TABLE ORDERS (
+ORDER_ID INT PRIMARY KEY,
+ORDER_DATE DATE,
+CUSTOMER_ID INT,
+PRODUCT_ID INT,
+QUANTITY INT,
+foreign key
+(CUSTOMER_ID) references CUSTOMERS(CUSTOMER_ID),
+foreign key
+(PRODUCT_ID) references PRODUCTS(PRODUCT_ID));
+
+INSERT INTO SUPPLIERS VALUES
+(1,'ELECTROWORLD','DELHI'),
+(2,'TECHZONE','MUMBAI'),
+(3,'SMARTGADGETS','BANGALORE'),
+(4,'POWERHUB','PUNE');
+
+
+INSERT INTO Products VALUES
+(101, 'Smartphone', 25000, 1),
+(102, 'Laptop', 55000, 2),
+(103, 'Smartwatch', 12000, 3),
+(104, 'Bluetooth Speaker', 7000, 1),
+(105, 'LED TV', 40000, NULL);   -- MISSING SUPPLIER
+
+
+INSERT INTO Customers VALUES
+(201, 'Amit', 'Delhi'),
+(202, 'Riya', 'Mumbai'),
+(203, 'Nazim', 'Lucknow'),
+(204, 'Suhail', 'Delhi'),
+(205, 'Zubair', 'Bangalore'); 
+
+
+INSERT INTO Orders VALUES
+(301, '2025-10-01', 201, 101, 2),
+(302, '2025-10-02', 202, 102, 1),
+(303, '2025-10-03', 203, 103, 1),
+(304, '2025-10-04', 204, 104, 3),
+(305, '2025-10-05', 205, NULL, 2);  -- No product selected
+
+
+
+SELECT C.CUSTOMER_NAME,
+P.PRODUCT_NAME,O.QUANTITY
+FROM CUSTOMERS C 
+INNER JOIN ORDERS O ON
+C.CUSTOMER_ID = O.CUSTOMER_ID
+INNER JOIN PRODUCTS P ON
+O.PRODUCT_ID = P.PRODUCT_ID;
+
+
+SELECT C.CUSTOMER_NAME,
+P.PRODUCT_NAME,O.QUANTITY
+FROM CUSTOMERS c 
+LEFT JOIN ORDERS O ON 
+C.CUSTOMER_ID=O.CUSTOMER_ID
+LEFT JOIN PRODUCTS P ON
+O.PRODUCT_ID=P.PRODUCT_ID;
+
+SELECT C.CUSTOMER_NAME,
+P.PRODUCT_NAME,O.QUANTITY
+FROM ORDERS O 
+RIGHT JOIN PRODUCTS P ON 
+O.PRODUCT_ID=P.PRODUCT_ID
+LEFT JOIN CUSTOMERS C ON 
+O.CUSTOMER_ID=C.CUSTOMER_ID;
+
+SELECT P.PRODUCT_NAME,
+S.SUPPLIER_NAME,S.CITY
+FROM PRODUCTS p 
+LEFT JOIN SUPPLIERS S ON 
+P.SUPPLIER_ID=S.SUPPLIER_ID;
+
+SELECT C.CUSTOMER_NAME,
+P.PRODUCT_NAME
+FROM CUSTOMERS C 
+CROSS JOIN PRODUCTS P;
+
+SELECT CITY FROM CUSTOMERS
+UNION
+SELECT CITY FROM SUPPLIERS 
+ORDER BY CITY;
+
+SELECT CITY FROM CUSTOMERS
+UNION ALL
+SELECT CITY FROM SUPPLIERS 
+ORDER BY CITY  ;
+
+SELECT CITY,COUNTRY FROM CUSTOMERS
+WHERE COUNTRY='GERMANY'
+UNION
+SELECT CITY,COUNTRY FROM SUPPLIERS
+WHERE COUNTRY='GERMANY'
+ORDER BY CITY;
+
+SELECT C.CUSTOMER_NAME,
+P.PRODUCT_NAME,O.QUANTITY
+FROM CUSTOMERS C 
+INNER JOIN ORDERS O ON
+C.CUSTOMER_ID=O.CUSTOMER_ID
+INNER JOIN PRODUCTS P ON
+O.PRODUCT_ID=P.PRODUCT_ID;
+
+
+CREATE TABLE STUDENT(
+ID INT PRIMARY KEY,
+NAME VARCHAR(50));
+
+
+INSERT INTO STUDENT
+(ID,NAME)
+VALUES
+(101,'ADAM'),
+(102,'BOB'),
+(103,'CASEY');
+
+
+CREATE TABLE COURSE(
+ID INT PRIMARY KEY,
+COURSE VARCHAR(50));
+
+INSERT INTO COURSE
+(ID,COURSE)
+VALUES
+(102,'ENGLISH'),
+(105,'MATH'),
+(103,'SCIENCE'),
+(107,'COMPUTER SCIENCE');
+
+SELECT * FROM COURSE;
+
+SELECT *       -- WITHOUT USE OF ALIAS INNER JOIN
+FROM STUDENT
+INNER JOIN COURSE
+ON STUDENT.ID=COURSE.ID;
+
+
+SELECT *         -- USE OF ALIAS
+FROM STUDENT AS S
+INNER JOIN COURSE AS C
+ON S.ID=C.ID;
+
+SELECT *         -- LEFT JOIN
+FROM STUDENT
+LEFT JOIN COURSE 
+ON STUDENT.ID=COURSE.ID;
+
+
+SELECT *      -- RIGHT JOIN
+FROM STUDENT
+RIGHT JOIN COURSE
+ON STUDENT.ID=COURSE.ID;
+
+SELECT *         -- FULL JOIN 
+FROM STUDENT
+LEFT JOIN COURSE
+ON STUDENT.ID=COURSE.ID
+UNION
+SELECT * 
+FROM STUDENT
+RIGHT JOIN COURSE
+ON STUDENT.ID=COURSE.ID;
+
+CREATE TABLE Employees (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    ManagerID INT
+);
+
+INSERT INTO Employees VALUES
+(1, 'Amit', NULL),
+(2, 'Rahul', 1),
+(3, 'Neha', 1),
+(4, 'Priya', 2),
+(5, 'Rohit', 2),
+(6, 'Anjali', 3);
+
+
+SELECT 
+    E.EmpName AS Employee,
+    M.EmpName AS Manager
+FROM Employees E
+LEFT JOIN Employees M
+ON E.ManagerID = M.EmpID;
+
+SELECT 
+    M.EmpName AS Manager,
+    E.EmpName AS Employee
+FROM Employees E
+JOIN Employees M
+ON E.ManagerID = M.EmpID
+ORDER BY Manager;
+
+CREATE TABLE Movies (
+    id INT PRIMARY KEY,
+    title VARCHAR(100),
+    director VARCHAR(100),
+    year INT,
+    length_minutes INT
+);
+
+INSERT INTO Movies (id, title, director, year, length_minutes) VALUES
+(1, 'Toy Story', 'John Lasseter', 1995, 81),
+(2, 'A Bug''s Life', 'John Lasseter', 1998, 95),
+(3, 'Toy Story 2', 'John Lasseter', 1999, 93),
+(4, 'Monsters, Inc.', 'Pete Docter', 2001, 92),
+(5, 'Finding Nemo', 'Andrew Stanton', 2003, 107),
+(6, 'The Incredibles', 'Brad Bird', 2004, 116),
+(7, 'Cars', 'John Lasseter', 2006, 117),
+(8, 'Ratatouille', 'Brad Bird', 2007, 115),
+(9, 'WALL-E', 'Andrew Stanton', 2008, 104),
+(10, 'Up', 'Pete Docter', 2009, 101),
+(11, 'Toy Story 3', 'Lee Unkrich', 2010, 103),
+(12, 'Cars 2', 'John Lasseter', 2011, 120),
+(13, 'Brave', 'Brenda Chapman', 2012, 102),
+(14, 'Monsters University', 'Dan Scanlon', 2013, 110);
+
+SELECT * FROM Movies;
+
+CREATE TABLE MovieSales (
+    id INT,
+    rating FLOAT,
+    domestic_sales BIGINT,
+    international_sales BIGINT,
+    FOREIGN KEY (id) REFERENCES Movies(id)
+);
+
+INSERT INTO MovieSales (id, rating, domestic_sales, international_sales) VALUES
+(5, 8.2, 380843261, 555900000),
+(14, 7.4, 268492764, 475066843),
+(8, 8.0, 206445654, 417277164),
+(12, 6.4, 191452396, 368400000),
+(3, 7.9, 245852179, 239163000),
+(6, 8.0, 261441092, 370001000),
+(9, 8.5, 223808164, 297503696),
+(11, 8.4, 415004880, 648167031),
+(1, 8.3, 191796233, 170162503),
+(7, 7.2, 244082982, 217900167),
+(10, 8.3, 293004164, 438338580),
+(4, 8.1, 289916256, 272900000),
+(2, 7.2, 162798565, 200600000),
+(13, 7.2, 237283207, 301700000);
+
+SELECT * FROM MovieSales;
+
+SELECT M.TITLE,S.DOMESTIC_SALES,S.INTERNATIONAL_SALES
+FROM MOVIES M
+INNER JOIN MOVIESALES S 
+ON M.ID=S.ID;
+
+
+SELECT 
+    S.DOMESTIC_SALES, S.INTERNATIONAL_SALES, M.TITLE
+FROM
+    MOVIESALES S
+        INNER JOIN
+    MOVIES M ON S.ID = M.ID;
+
+SELECT 
+    M.TITLE, S.RATING
+FROM
+    MOVIES M
+        RIGHT JOIN
+    MOVIESALES s ON M.ID = S.ID
+ORDER BY RATING DESC;
+
+
+CREATE TABLE buildings (
+    building_name VARCHAR(10),
+    capacity INT
+);
+
+alter table buildings 
+modify column building_name varchar(10) primary key;
+
+INSERT INTO buildings (building_name, capacity) VALUES
+('1e', 24),
+('1w', 32),
+('2e', 16),
+('2w', 20);
+
+SELECT * FROM buildings;
+
+CREATE TABLE employees12 (
+    role VARCHAR(50),
+    name VARCHAR(100),
+    building_name VARCHAR(10),
+    years_employed INT,
+    foreign key (building_name) references buildings (building_name)
+);
+
+INSERT INTO employees12 (role, name, building_name, years_employed) VALUES
+('Engineer', 'Becky A.', '1e', 4),
+('Engineer', 'Dan B.', '1e', 2),
+('Engineer', 'Sharon F.', '1e', 6),
+('Engineer', 'Dan M.', '1e', 4),
+('Engineer', 'Malcom S.', '1e', 1),
+('Artist', 'Tylar S.', '2w', 2),
+('Artist', 'Sherman D.', '2w', 8),
+('Artist', 'Jakob J.', '2w', 6),
+('Artist', 'Lillia A.', '2w', 7),
+('Artist', 'Brandon J.', '2w', 7),
+('Manager', 'Scott K.', '1e', 9),
+('Manager', 'Shirlee M.', '1e', 3),
+('Manager', 'Daria O.', '2w', 6);
+
+SELECT * FROM employees12;
+
+
+SELECT distinct BUILDING_NAME FROM
+EMPLOYEES12;
+
+SELECT 
+    BUILDING_NAME, CAPACITY
+FROM
+    BUILDINGS;
+    
+    
+    SELECT distinct B.BUILDING_NAME,E.ROLE
+    FROM BUILDINGS B 
+    LEFT JOIN EMPLOYEES12 E 
+    ON B.BUILDING_NAME=E.BUILDING_NAME;
+    
+    UPDATE EMPLOYEES12
+    SET BUILDING_NAME=null
+    WHERE NAME ='DARIA O.';
+    
+    SET SQL_SAFE_UPDATES = 0;
+    
+    update employees12
+set building_name=null
+where name="Lillia A.";
+
+SELECT NAME,ROLE
+FROM EMPLOYEES12
+WHERE BUILDING_NAME IS NULL;
+
+SELECT NAME, BUILDING_NAME
+FROM EMPLOYEES12
+WHERE BUILDING_NAME IS NULL; 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
